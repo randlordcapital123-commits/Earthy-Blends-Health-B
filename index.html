@@ -1,0 +1,163 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Earthy Blends</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="#home" class="brand-logo">
+        <img id="siteLogo" src="https://via.placeholder.com/150?text=Logo" alt="Earthy Blends Logo">
+        <span class="brand-name">EARTHY BLENDS</span>
+      </a>
+      
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <span class="hamburger"></span>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#home" onclick="closeMenu()">Home</a></li>
+        <li><a href="#services" onclick="closeMenu()">Services</a></li>
+        <li><a href="#about" onclick="closeMenu()">About</a></li>
+        <li><button class="admin-btn" onclick="triggerAdminAccess(); closeMenu();">Admin Panel</button></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section (Uncropped Inline Image Layout) -->
+  <section id="home" class="hero">
+    <div class="hero-img-container" id="heroImgContainer">
+      <!-- Uncropped banner dynamically loaded via JS -->
+    </div>
+    <div class="hero-content">
+      <span class="subtitle">Welcome to Natural Wellness</span>
+      <h1>Rejuvenate Mind, Body & Soul</h1>
+      <p>Experience holistic treatments and natural blends crafted to restore your body's innate balance.</p>
+      <a href="#services" class="cta-btn">Explore Treatments</a>
+    </div>
+  </section>
+
+  <!-- Services / Catalog Section -->
+  <section id="services" class="services-section">
+    <div class="section-title">
+      <h2>Treatments & Offerings</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="services-grid" id="servicesGrid">
+      <!-- Service Cards dynamically rendered via JS -->
+    </div>
+  </section>
+
+  <!-- About & Contact Section -->
+  <section id="about" class="about-section">
+    <div class="about-container">
+      <div class="about-text">
+        <h2>About Earthy Blends</h2>
+        <div class="divider"></div>
+        <p>Dedicated to delivering pure, organic, and restorative health experiences. Every treatment is designed with natural wellness in mind.</p>
+      </div>
+      <div class="contact-details">
+        <h3>Contact Us</h3>
+        <p><strong>WhatsApp / Phone:</strong> +27 82 487 6140</p>
+        <p><strong>Location:</strong> Pretoria, Gauteng, South Africa</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 Earthy Blends. All rights reserved.</p>
+  </footer>
+
+  <!-- Admin Login Modal -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content auth-card">
+      <span class="close-btn" onclick="closeLoginModal()">&times;</span>
+      <h2>Admin Login</h2>
+      <p class="section-desc">Enter admin credentials to manage content.</p>
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="adminPass">Password</label>
+          <input type="password" id="adminPass" required placeholder="Enter password">
+        </div>
+        <div id="loginError" class="error-msg"></div>
+        <button type="submit" class="cta-btn full-width">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Control Panel Modal -->
+  <div id="adminModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeAdminModal()">&times;</span>
+      <div class="admin-header">
+        <h2>Admin Panel</h2>
+        <button class="logout-btn" onclick="logoutAdmin()">Lock & Exit</button>
+      </div>
+
+      <!-- Add New Service Section -->
+      <div class="admin-section">
+        <h3>Add New Treatment / Service</h3>
+        <form onsubmit="handleAddService(event)">
+          <input type="text" id="serviceTitle" placeholder="Treatment Title" required>
+          <input type="number" id="servicePrice" placeholder="Price (ZAR)" required>
+          <textarea id="serviceDesc" placeholder="Brief description..." rows="3" required></textarea>
+
+          <label>Treatment Image (Drag & Drop or Click)</label>
+          <div class="drag-drop-area" id="dropArea">
+            <p>Drag & Drop Image Here or Click to Browse</p>
+            <input type="file" id="serviceImageInput" accept="image/*" style="display:none">
+            <img id="imagePreview" class="preview-img" alt="Preview">
+          </div>
+
+          <button type="submit" class="cta-btn full-width">Add Service</button>
+        </form>
+      </div>
+
+      <!-- Hero Banner Image Manager -->
+      <div class="admin-section">
+        <h3>Update Hero Banner Image</h3>
+        <div class="drag-drop-area" id="heroDropArea">
+          <p>Drag & Drop Hero Banner Image Here or Click to Browse</p>
+          <input type="file" id="heroImageInput" accept="image/*" style="display:none">
+          <img id="heroPreview" class="preview-img" alt="Hero Preview">
+        </div>
+        <button onclick="saveHeroImage()" class="cta-btn full-width">Save Hero Banner Image</button>
+      </div>
+
+      <!-- Logo Manager -->
+      <div class="admin-section">
+        <h3>Update Brand Logo</h3>
+        <input type="file" id="logoInput" accept="image/*">
+        <button onclick="uploadLogo()" class="cta-btn full-width" style="margin-top:8px;">Upload New Logo</button>
+      </div>
+
+      <!-- Change Password -->
+      <div class="admin-section">
+        <h3>Change Admin Password</h3>
+        <input type="password" id="newAdminPassword" placeholder="New Password">
+        <button onclick="updateAdminPassword()" class="cta-btn full-width">Update Password</button>
+      </div>
+
+      <!-- Manage Existing Services -->
+      <div class="admin-section">
+        <h3>Manage Current Services</h3>
+        <div id="adminServicesList" class="admin-services-list">
+          <!-- Dynamically listed services with delete buttons -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
