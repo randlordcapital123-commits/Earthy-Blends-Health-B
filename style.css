@@ -1,3 +1,4 @@
+/* style.css */
 :root {
   --primary-green: #2C3E35;
   --accent-gold: #C5A059;
@@ -55,7 +56,8 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  object-fit: cover;
+  object-fit: contain; /* Preserves full uncropped logo */
+  background-color: var(--white);
   border: 1px solid var(--accent-gold);
 }
 
@@ -136,13 +138,14 @@ body {
 .hamburger::before { top: -7px; }
 .hamburger::after { top: 7px; }
 
-/* Dynamic Hero Cover */
+/* Dynamic Hero Cover - Preserves complete hero image without cropping */
 .hero {
-  min-height: 75vh;
+  min-height: 70vh;
   padding: 6rem 1.2rem 3rem;
-  background-position: center;
-  background-size: cover;
+  background-position: center center;
+  background-size: contain; /* Shows full uncropped background */
   background-repeat: no-repeat;
+  background-color: var(--primary-green); /* Clean background fill */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -153,6 +156,10 @@ body {
 
 .hero-content {
   max-width: 800px;
+  background: rgba(28, 36, 33, 0.75);
+  padding: 2rem;
+  border-radius: 8px;
+  backdrop-filter: blur(3px);
 }
 
 .hero .subtitle {
@@ -230,7 +237,7 @@ body {
   gap: 1.5rem;
 }
 
-/* Uniform Resized Treatment Cards */
+/* Full Aspect Ratio Uncropped Cards */
 .card {
   background: var(--white);
   border-radius: 6px;
@@ -240,11 +247,20 @@ body {
   flex-direction: column;
 }
 
+.card-img-wrapper {
+  width: 100%;
+  background-color: #f4f4f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
 .card-img {
   width: 100%;
-  height: 200px;
-  object-fit: cover; /* Guarantees resized uniform dimensions */
-  background-color: #f0f0f0;
+  max-height: 260px;
+  object-fit: contain; /* Displays 100% of image without cutting edges */
+  display: block;
 }
 
 .card-body {
@@ -443,7 +459,7 @@ body {
   max-height: 120px;
   margin: 10px auto 0;
   display: none;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 4px;
 }
 
@@ -459,9 +475,10 @@ body {
 .admin-item img {
   width: 45px;
   height: 45px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 4px;
   margin-right: 10px;
+  background: #f0f0f0;
 }
 
 .admin-info {

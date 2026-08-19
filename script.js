@@ -1,7 +1,7 @@
-const PHONE_NUMBER = "27824876140"; // Local formatted for WhatsApp API (South Africa +27)
-const DEFAULT_PASSWORD = "admin"; // Default password
+// script.js
+const PHONE_NUMBER = "27824876140";
+const DEFAULT_PASSWORD = "admin";
 
-// Embedded Client Database Engine (IndexedDB wrapper with LocalStorage fallback)
 class SalonDatabase {
   constructor() {
     this.dbName = "EarthyBlendsDB";
@@ -83,21 +83,20 @@ class SalonDatabase {
 
 const db = new SalonDatabase();
 
-// Default initial database catalog
 const defaultServices = [
   {
     id: 1,
     title: "Deep Tissue Massage",
     price: 450,
     desc: "Targeting deep muscle layers to alleviate stress and physical tension.",
-    image: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=800&q=80"
   },
   {
     id: 2,
     title: "Hydrating Facial",
     price: 380,
     desc: "Restores moisture balance and leaves your skin glowing with vitality.",
-    image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80"
   }
 ];
 
@@ -111,7 +110,6 @@ let isAuthenticated = false;
 document.addEventListener("DOMContentLoaded", async () => {
   await db.init();
   
-  // Initialize Database Data
   const storedServices = await db.getServices();
   if (!storedServices) {
     services = defaultServices;
@@ -127,8 +125,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupMobileNav();
 });
 
-// Canvas Image Resizer Utility
-function resizeImage(file, maxWidth, maxHeight, quality = 0.85) {
+// Resizer Utility that retains 100% of the image aspect ratio
+function resizeImage(file, maxDimension = 1200, quality = 0.88) {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -138,15 +136,13 @@ function resizeImage(file, maxWidth, maxHeight, quality = 0.85) {
         let width = img.width;
         let height = img.height;
 
-        if (width > height) {
-          if (width > maxWidth) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
-          }
-        } else {
-          if (height > maxHeight) {
-            width = Math.round((width * maxHeight) / height);
-            height = maxHeight;
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
           }
         }
 
@@ -155,7 +151,6 @@ function resizeImage(file, maxWidth, maxHeight, quality = 0.85) {
         const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Convert resized image to compressed Base64 Data URL
         const dataUrl = canvas.toDataURL("image/jpeg", quality);
         resolve(dataUrl);
       };
@@ -165,7 +160,6 @@ function resizeImage(file, maxWidth, maxHeight, quality = 0.85) {
   });
 }
 
-// Authentication Flow
 function triggerAdminAccess() {
   if (isAuthenticated) {
     openAdminModal();
@@ -215,7 +209,6 @@ function logoutAdmin() {
   alert("Admin panel locked.");
 }
 
-// Mobile Navigation Toggle
 function setupMobileNav() {
   const toggleBtn = document.getElementById("navToggle");
   const navLinks = document.getElementById("navLinks");
@@ -232,7 +225,6 @@ function closeMenu() {
   }
 }
 
-// Render Services Catalog
 function renderServices() {
   const grid = document.getElementById("servicesGrid");
   const adminList = document.getElementById("adminServicesList");
@@ -246,7 +238,9 @@ function renderServices() {
 
     grid.innerHTML += `
       <div class="card">
-        <img src="${service.image}" class="card-img" alt="${service.title}">
+        <div class="card-img-wrapper">
+          <img src="${service.image}" class="card-img" alt="${service.title}">
+        </div>
         <div class="card-body">
           <h3 class="card-title">${service.title}</h3>
           <div class="card-price">R ${service.price}</div>
@@ -268,23 +262,20 @@ function renderServices() {
   });
 }
 
-// Drag & Drop Setup
 function setupDragAndDrop() {
-  // Service Image Drop
   const dropArea = document.getElementById("dropArea");
   const fileInput = document.getElementById("serviceImageInput");
   setupDropZone(dropArea, fileInput, async (file) => {
-    currentTreatmentImgResized = await resizeImage(file, 600, 400, 0.85);
+    currentTreatmentImgResized = await resizeImage(file, 800, 0.88);
     const imgPreview = document.getElementById("imagePreview");
     imgPreview.src = currentTreatmentImgResized;
     imgPreview.style.display = "block";
   });
 
-  // Hero Cover Image Drop
   const heroDropArea = document.getElementById("heroDropArea");
   const heroFileInput = document.getElementById("heroImageInput");
   setupDropZone(heroDropArea, heroFileInput, async (file) => {
-    currentHeroImgResized = await resizeImage(file, 1200, 800, 0.85);
+    currentHeroImgResized = await resizeImage(file, 1400, 0.88);
     const heroPreview = document.getElementById("heroPreview");
     heroPreview.src = currentHeroImgResized;
     heroPreview.style.display = "block";
@@ -314,7 +305,6 @@ function setupDropZone(dropArea, fileInput, callback) {
   });
 }
 
-// Save Resized Hero Image
 async function saveHeroImage() {
   if (currentHeroImgResized) {
     await db.setSetting("hero_image", currentHeroImgResized);
@@ -328,10 +318,9 @@ async function saveHeroImage() {
 async function loadHeroImage() {
   const heroImg = (await db.getSetting("hero_image")) || defaultHeroImage;
   const heroHeader = document.getElementById("home");
-  heroHeader.style.backgroundImage = `linear-gradient(rgba(44, 62, 53, 0.65), rgba(28, 36, 33, 0.75)), url('${heroImg}')`;
+  heroHeader.style.backgroundImage = `url('${heroImg}')`;
 }
 
-// Add New Treatment (With Auto-Resizing)
 async function handleAddService(e) {
   e.preventDefault();
   const title = document.getElementById("serviceTitle").value;
@@ -343,32 +332,29 @@ async function handleAddService(e) {
     title,
     price,
     desc,
-    image: currentTreatmentImgResized || "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80"
+    image: currentTreatmentImgResized || "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80"
   };
 
   services.push(newService);
   await db.saveServices(services);
   renderServices();
 
-  // Reset Form
   e.target.reset();
   document.getElementById("imagePreview").style.display = "none";
   currentTreatmentImgResized = "";
   alert("Treatment added successfully!");
 }
 
-// Delete Service from Database
 async function deleteService(id) {
   services = services.filter((s) => s.id !== id);
   await db.saveServices(services);
   renderServices();
 }
 
-// Logo Management with Auto-Resizing
 async function uploadLogo() {
   const logoInput = document.getElementById("logoInput");
   if (logoInput.files.length > 0) {
-    const resizedLogo = await resizeImage(logoInput.files[0], 200, 200, 0.9);
+    const resizedLogo = await resizeImage(logoInput.files[0], 300, 0.9);
     await db.setSetting("logo", resizedLogo);
     loadLogo();
     alert("Logo updated successfully!");
@@ -382,7 +368,6 @@ async function loadLogo() {
   }
 }
 
-// Modal Controllers
 function openAdminModal() {
   document.getElementById("adminModal").style.display = "block";
 }
